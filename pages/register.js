@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import Layout from '../components/Layout'
+import axios from 'axios'
 
 const register = () => {
   const [state, setState] = useState({
@@ -21,9 +22,21 @@ const register = () => {
     })
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    console.table({ name, email, password })
+    // console.table({ name, email, password })
+
+    try {
+      const res = await axios.post('http://localhost:5000/api/auth/register', {
+        name,
+        email,
+        password,
+      })
+
+      console.log(res)
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   const { name, email, password, err, success, btnTxt } = state
@@ -46,7 +59,7 @@ const register = () => {
           name='email'
           value={email}
           onChange={handleChange}
-          type='text'
+          type='email'
           className='form-control'
           placeholder='Type your email'
         />
@@ -57,7 +70,7 @@ const register = () => {
           name='password'
           value={password}
           onChange={handleChange}
-          type='text'
+          type='password'
           className='form-control'
           placeholder='Type your password'
         />
