@@ -1,8 +1,11 @@
-import React, { useState } from 'react'
-import Layout from '../components/Layout'
+import React, { useState, useEffect } from 'react'
+import Layout from '../../components/Layout'
 import axios from 'axios'
+import { showSuccessMessage, showErrorMessage } from '../../helpers/alert'
+import { isAuth } from '../../helpers/auth'
+import Router from 'next/router'
 
-const register = () => {
+const Register = () => {
   const [state, setState] = useState({
     name: '',
     email: '',
@@ -11,6 +14,10 @@ const register = () => {
     success: '',
     btnTxt: 'Register',
   })
+
+  useEffect(() => {
+    isAuth() && Router.push('/')
+  }, [])
 
   const handleChange = (e) => {
     setState({
@@ -26,16 +33,26 @@ const register = () => {
     e.preventDefault()
     // console.table({ name, email, password })
 
+    setState({ ...state, btnTxt: 'Registering' })
+
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/register', {
+      const res = await axios.post(`${process.env.BASE_API}/auth/register`, {
         name,
         email,
         password,
       })
 
-      console.log(res)
+      setState({
+        ...state,
+        name: '',
+        email: '',
+        password: '',
+        success: res.data.message,
+        btnTxt: 'Submitted',
+      })
     } catch (err) {
-      console.log(err)
+      console.error(err.response)
+      setState({ ...state, btnTxt: 'Register', err: err.response.data.error })
     }
   }
 
@@ -90,10 +107,15 @@ const register = () => {
         <h1>Register</h1>
         <br />
 
+        {success && showSuccessMessage(success)}
+        {err && showErrorMessage(err)}
+
+        <br />
+
         {registerForm()}
       </div>
     </Layout>
   )
 }
 
-export default register
+export default Register

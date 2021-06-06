@@ -3,6 +3,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import Router from 'next/router'
 import NProgress from 'nprogress'
+import { isAuth, logout } from '../helpers/auth'
 
 // Router.onRouteChangeStart = (url) => NProgress.start()
 // Router.onRouteChangeComplete = (url) => NProgress.done()
@@ -39,17 +40,45 @@ const Layout = ({ children }) => {
         </Link>
       </li>
 
-      <li className='nav-item'>
-        <Link href='/login'>
-          <a className='nav-link text-dark'>Login</a>
-        </Link>
-      </li>
+      {!isAuth() && (
+        <>
+          <li className='nav-item'>
+            <Link href='/auth/login'>
+              <a className='nav-link text-dark'>Login</a>
+            </Link>
+          </li>
 
-      <li className='nav-item'>
-        <Link href='/register'>
-          <a className='nav-link text-dark'>Register</a>
-        </Link>
-      </li>
+          <li className='nav-item'>
+            <Link href='/auth/register'>
+              <a className='nav-link text-dark'>Register</a>
+            </Link>
+          </li>
+        </>
+      )}
+
+      {isAuth() && isAuth().role === 'admin' && (
+        <li className='nav-item ml-auto'>
+          <Link href='/admin'>
+            <a className='nav-link text-dark'>Admin</a>
+          </Link>
+        </li>
+      )}
+
+      {isAuth() && isAuth().role === 'subcriber' && (
+        <li className='nav-item ml-auto'>
+          <Link href='/user'>
+            <a className='nav-link text-dark'>User</a>
+          </Link>
+        </li>
+      )}
+
+      {isAuth() && (
+        <li className='nav-item'>
+          <a onClick={logout} className='nav-link text-dark'>
+            Logout
+          </a>
+        </li>
+      )}
     </ul>
   )
 
