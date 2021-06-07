@@ -1,8 +1,13 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Layout from '../../components/Layout'
+import withUser from '../withUser'
 
-const UserIdx = () => {
-  return <Layout>index page</Layout>
+const UserIdx = ({ user, token }) => {
+  return (
+    <Layout>
+      {JSON.stringify(user)}, {token}
+    </Layout>
+  )
 }
 
-export default UserIdx
+export default withUser(UserIdx)
